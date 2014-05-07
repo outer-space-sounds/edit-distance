@@ -25,25 +25,67 @@ static t_class *edit_distance_class;
 // Methods
 // 
 
+static int min(int a, int b, int c){
+   int temp;
+   if(a<b){
+      temp = a;
+   }
+   else{
+      temp = b;
+   }
+
+   int min;
+   if(temp<c){
+      min = temp; 
+   }
+   else{
+      min = c; 
+   }
+
+   return min;
+}
+
 // Received a list on left inlet. Calculate distance and output float
-static void edit_distance_left(t_edit_distance *x, t_symbol *s, int argc, t_atom *argv) {
+static void edit_distance_left(t_edit_distance* x, t_symbol* s, int argc, t_atom* argv) {
    // Get floats in inlet list;
-   int i;
+   int i,j;
    int list_left_length = argc;
    float list_left[MAX_LIST_SIZE];
    for(i=0; i<argc; i++){
       list_left[i] = atom_getfloatarg(i, argc, argv);
    }
 
-   // Do whatever with list_left[], x->list_right[], list_left_length, x->list_right_length
-   post("%f", list_left[0]);
-   post("%f", x->list_right[0]);
+   /////////////////////////////
+   // HERE WE GO
+   /////////////////////////////
+   int matrix[list_left_length + 1][x->list_right_length + 1];
 
-   outlet_float(x->outlet, 1.0);
+   matrix[0][0] = 0;
+
+   for(j=1; j<list_left_length; j++){
+      matrix[0][j] = j; 
+   }
+
+   for(i=1; i<x->list_right_length; i++){
+      matrix[i][0] = j; 
+   }
+
+   for(j=1; j<=list_left_length; j++){
+      for(i=1; i<=x->list_right_length; i++){
+         if(list_left[i] == x->list_right[j]){
+            matrix[i][j] = matrix[i-1][j-1];
+         }
+         else{
+            matrix[i][j] = min(matrix[i-1][j]+1, matrix[i][j-1]+1, matrix[i-1][j-1]+1);
+         }
+      }
+   }
+   float result = (int)matrix[list_left_length][x->list_right_length];
+   outlet_float(x->outlet, result);
 }
 
 // Received a list on right inlet. Store it on x->list_right
-static void edit_distance_right(t_edit_distance *x, t_symbol*s, int argc, t_atom*argv) {
+static void edit_distance_right(t_edit_distance* x, t_symbol* s, int argc, t_atom* argv) {
    x->list_right_length = argc;
 
    // Get floats in inlet list;
@@ -60,27 +102,16 @@ static void *edit_distance_new(void) {
    t_edit_distance *x = (t_edit_distance *)pd_new(edit_distance_class);
    x->inlet_right=inlet_new(&x->x_obj, &x->x_obj.ob_pd, gensym("list"), gensym("lst2"));
    x->outlet = outlet_new(&x->x_obj, &s_anything);
-   post("edit_distance_new");
    return (void *)x;
 }
 
-static void edit_distance_free(t_edit_distance *x)
-{ 
-  /* if(x->x_length) { */
-  /*        freebytes(x->x_length, x->x_lcount*sizeof(int)); */
-  /*            x->x_length=0; */
-  /*                x->x_lcount=0; */
-  /*                  } */
-  /*   inlet_free(x->x_lengin); */
-   post("freeing");
-
+static void edit_distance_free(t_edit_distance *x) { 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Class definition
 // 
 void edit_distance_setup(void) {
-   post("edit_distance_setup");
    edit_distance_class = class_new(gensym("edit_distance"), (t_newmethod)edit_distance_new, (t_method)edit_distance_free, sizeof(t_edit_distance), 0, 0);
    class_addlist(edit_distance_class, edit_distance_left);
    class_addmethod(edit_distance_class, (t_method)edit_distance_right, gensym("lst2"), A_GIMME, 0);
