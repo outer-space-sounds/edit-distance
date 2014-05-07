@@ -47,6 +47,8 @@ static int min(int a, int b, int c){
 
 // Received a list on left inlet. Calculate distance and output float
 static void edit_distance_left(t_edit_distance* x, t_symbol* s, int argc, t_atom* argv) {
+   (void)s;
+
    // Get floats in inlet list;
    int i,j;
    int list_left_length = argc;
@@ -60,19 +62,24 @@ static void edit_distance_left(t_edit_distance* x, t_symbol* s, int argc, t_atom
    /////////////////////////////
    int matrix[list_left_length + 1][x->list_right_length + 1];
 
-   matrix[0][0] = 0;
+   // Clear mtx
+   for(j=0; j<=x->list_right_length; j++){
+      for(i=0; i<=list_left_length; i++){
+         matrix[i][j] = 0;
+      }
+   }
 
-   for(j=1; j<list_left_length; j++){
+   for(j=1; j<=x->list_right_length; j++){
       matrix[0][j] = j; 
    }
 
-   for(i=1; i<x->list_right_length; i++){
-      matrix[i][0] = j; 
+   for(i=1; i<=list_left_length; i++){
+      matrix[i][0] = i; 
    }
 
-   for(j=1; j<=list_left_length; j++){
-      for(i=1; i<=x->list_right_length; i++){
-         if(list_left[i] == x->list_right[j]){
+   for(j=1; j<=x->list_right_length; j++){
+      for(i=1; i<=list_left_length; i++){
+         if(list_left[i-1] == x->list_right[j-1]){
             matrix[i][j] = matrix[i-1][j-1];
          }
          else{
@@ -80,12 +87,22 @@ static void edit_distance_left(t_edit_distance* x, t_symbol* s, int argc, t_atom
          }
       }
    }
+
+   // Debug
+   /* for(j=0; j<=x->list_right_length; j++){ */
+   /*    for(i=0; i<=list_left_length; i++){ */
+   /*       post("%i, %i: %i",i,j,matrix[i][j]); */
+   /*    } */
+   /* } */
+
    float result = (int)matrix[list_left_length][x->list_right_length];
    outlet_float(x->outlet, result);
 }
 
 // Received a list on right inlet. Store it on x->list_right
 static void edit_distance_right(t_edit_distance* x, t_symbol* s, int argc, t_atom* argv) {
+   (void)s;
+
    x->list_right_length = argc;
 
    // Get floats in inlet list;
@@ -106,6 +123,7 @@ static void *edit_distance_new(void) {
 }
 
 static void edit_distance_free(t_edit_distance *x) { 
+   (void)x;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

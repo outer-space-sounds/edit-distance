@@ -1,4 +1,4 @@
-#N canvas 582 199 450 300 10;
+#N canvas 652 156 450 300 10;
 #N canvas 482 136 494 344 META 0;
 #X text 12 5 KEYWORDS control;
 #X text 12 45 DESCRIPTION example libdir object class;
@@ -8,8 +8,8 @@
 #X restore 370 250 pd META;
 #X obj 170 133 edit_distance;
 #X floatatom 170 180 7 0 0 0 - - -;
-#X msg 74 62 1 2 3 4 5;
-#X msg 263 63 1 3 2 4 6;
+#X msg 261 64 0 0 0 1;
+#X msg 74 61 0 1 0 0;
 #X connect 1 0 2 0;
-#X connect 3 0 1 0;
-#X connect 4 0 1 1;
+#X connect 3 0 1 1;
+#X connect 4 0 1 0;
