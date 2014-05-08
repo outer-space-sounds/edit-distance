@@ -1,22 +1,22 @@
 ## Pd library template version 1.0.14
 # For instructions on how to use this template, see:
 #  http://puredata.info/docs/developer/MakefileTemplate
-LIBRARY_NAME = edit_distance
+LIBRARY_NAME = dl_distance
 
 # add your .c source files, one object per file, to the SOURCES
 # variable, help files will be included automatically, and for GUI
 # objects, the matching .tcl file too
-SOURCES = edit_distance.c
+SOURCES = dl_distance.c
 
 # list all pd objects (i.e. myobject.pd) files here, and their helpfiles will
 # be included automatically
 PDOBJECTS =
 
 # example patches and related files, in the 'examples' subfolder
-EXAMPLES = bothtogether.pd
+EXAMPLES = 
 
 # manuals and related files, in the 'manual' subfolder
-MANUAL = manual.txt
+MANUAL = 
 
 # if you want to include any other files in the source and binary tarballs,
 # list them here.  This can be anything from header files, test patches,
